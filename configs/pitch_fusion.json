@@ -1,0 +1,75 @@
+{
+  "schema_version": "b6.pitch_fusion.official.controlled_overlap.v1",
+  "run_name": "pitch_fusion_official_controlled_seed2025",
+  "display_name": "Official Pitch-Fusion — Controlled Speaker-Overlapping",
+  "seed": 2025,
+  "split_version": "controlled_speaker_overlap_v1",
+  "expected_split_sizes": {
+    "train": 3494,
+    "validation": 749,
+    "test": 749
+  },
+  "require_grouped_cv_folds": false,
+  "emotion_order": ["happy", "neutral", "sad", "angry"],
+  "feature_contract": {
+    "numeric_prefixes": ["mfcc_", "egemaps_", "pitch_"],
+    "expected_features": 174
+  },
+  "models": {
+    "pitch_fusion_official_controlled_seed2025": {}
+  },
+  "upstream": {
+    "repository": "https://github.com/Lamnu1902/Pitch-fusion",
+    "commit": "2e8e05f940fce265f2d2090556b1b6d7e84e7368",
+    "model_source": "ser_pitch_model.py",
+    "training_source": "train_interpolated_pitch.py"
+  },
+  "backbone": {
+    "model_id": "nguyenvulebinh/wav2vec2-base-vi",
+    "revision": "86bde51fa76dd7f2c4c1bb28d7475d622639f869",
+    "local_snapshot": "data/interim/models/huggingface/models--nguyenvulebinh--wav2vec2-base-vi/snapshots/86bde51fa76dd7f2c4c1bb28d7475d622639f869",
+    "freeze_feature_encoder": true
+  },
+  "pitch_preprocessing": {
+    "extractor": "validated B4 librosa.pyin cache",
+    "fmin_hz": 50,
+    "fmax_hz": 500,
+    "frame_length": 1024,
+    "hop_length": 160,
+    "unvoiced_value": 0.0,
+    "interpolate_to_waveform_length": true
+  },
+  "training": {
+    "epochs": 30,
+    "batch_size": 2,
+    "gradient_accumulation_steps": 1,
+    "learning_rate": 0.000015,
+    "weight_decay": 0.0,
+    "warmup_steps": 0,
+    "gradient_clip": 1.0,
+    "num_workers": 0,
+    "mixed_precision": "bf16"
+  },
+  "early_stopping": {
+    "metric": "validation_balanced_accuracy",
+    "mode": "max",
+    "patience": 5,
+    "min_delta": 0.001,
+    "restore_best_weights": true
+  },
+  "architecture": {
+    "pitch_encoder": "transformers.Wav2Vec2FeatureEncoder + Wav2Vec2FeatureProjection",
+    "bidirectional_cross_attention_heads": 16,
+    "fused_self_attention_heads": 16,
+    "classifier_projection_size": 256,
+    "temporal_pooling": "unmasked_mean"
+  },
+  "reproduction_boundary": {
+    "official_architecture": true,
+    "official_pitch_preprocessing": false,
+    "official_emotion_id_mapping": true,
+    "exact_historical_reproduction": false,
+    "protocol_change": "Uses the controlled speaker-overlapping 70/15/15 manifests instead of the upstream 90/10 emotion-stratified split.",
+    "runtime_adaptations": "Uses the existing validated B4 pYIN contour (50-500 Hz, 1024/160 frame-hop) with the upstream raw-Hz zero-unvoiced interpolation behavior because the upstream C2-C7 default pYIN took more than 10 minutes for one 24.7-second utterance. The Wav2Vec2 and pitch encoders use BF16 autocast for the 8 GB CUDA GPU, while cross-attention, fusion, projection, classifier, and loss remain FP32 to prevent mixed-precision optimizer instability. Restores PyTorch Xavier initialization for MultiheadAttention.in_proj_weight because Transformers 4.57 otherwise materializes these checkpoint-missing direct parameters as zeros; this matches the Transformers 4.30-era upstream behavior. Uses num_workers=0 for Windows-safe in-memory Parquet audio access. Training uses validation-balanced-accuracy early stopping with patience 5 and restores the best validation checkpoint. Test is evaluated exactly once after training stops."
+  }
+}

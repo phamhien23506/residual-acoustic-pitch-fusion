@@ -1,0 +1,38 @@
+{
+  "schema_version": "rapf.residual_adapter.v1",
+  "seeds": [42, 2025, 3407],
+  "protocol": "controlled_speaker_overlap_v1",
+  "expected_split_sizes": {
+    "train": 3494,
+    "validation": 749,
+    "test": 749
+  },
+  "architecture": {
+    "hidden_size": 64,
+    "max_frames": 300,
+    "prosody_channels": 6,
+    "log_mel_channels": 3,
+    "anchor_aux_size": 9,
+    "branch_mode": "both",
+    "branch_fusion": "learned",
+    "correction_gate": false,
+    "final_logits": "anchor_logits + residual_logits"
+  },
+  "training": {
+    "optimizer": "AdamW",
+    "learning_rate": 0.0002,
+    "weight_decay": 0.02,
+    "batch_size": 32,
+    "max_epochs": 12,
+    "dropout": 0.4,
+    "branch_dropout": 0.25,
+    "residual_penalty": 0.02
+  },
+  "early_stopping": {
+    "metric": "validation_balanced_accuracy",
+    "patience": 3,
+    "min_delta": 0.002,
+    "maximum_train_validation_gap": 0.2,
+    "overfit_patience": 2
+  }
+}
