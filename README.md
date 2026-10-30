@@ -3,7 +3,7 @@
 Reference implementation and reproducibility artifacts for Vietnamese speech emotion recognition
 on ViSEC under a controlled speaker-overlap protocol.
 
-![Architecture](figures/architecture.png)
+![Residual acoustic adaptation framework](figures/fig_residual_adaptation_framework.png)
 
 ## Scope
 
