@@ -1,0 +1,4 @@
+metric,baseline_pct,d2_pct,delta_percentage_points,ci95_low_percentage_points,ci95_high_percentage_points,bootstrap_type,bootstrap_seed,n_resamples,n_test
+WA,72.63017356475301,73.16421895861149,0.5340453938584733,-0.9345794392523366,2.136181575433904,utterance-paired-class-stratified-percentile,2025,2000,749
+UA,70.84482163193655,72.47736722510989,1.6325455931733401,0.03932080632339548,3.34298526019685,utterance-paired-class-stratified-percentile,2025,2000,749
+Macro-F1,71.26139449120815,72.43012262698868,1.168728135780528,-0.41865225341318535,2.9013550575014513,utterance-paired-class-stratified-percentile,2025,2000,749

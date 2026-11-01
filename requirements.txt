@@ -8,5 +8,6 @@ pandas==3.0.1
 pyarrow==25.0.1
 librosa==1.0.0
 scikit-learn>=1.7,<2
+matplotlib>=3.9,<4
 pytest>=8,<10
 ruff>=0.9,<1
